@@ -8,6 +8,8 @@ local function gameToMap(x, y)
     return lng, lat
 end
 
+exports('gameToMap', gameToMap)
+
 AddEventHandler('playerDropped', function(reason, resourceName, clientDropReason)
     local src = source --[[@as number]]
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
