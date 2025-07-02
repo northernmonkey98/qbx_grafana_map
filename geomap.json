@@ -119,8 +119,8 @@
             "uid": "loki"
           },
           "direction": "backward",
-          "editorMode": "builder",
-          "expr": "{event=~\"$map_query\"} | json",
+          "editorMode": "code",
+          "expr": "{event=~\"$event_filter\"} | json",
           "queryType": "range",
           "refId": "A"
         }
@@ -148,13 +148,109 @@
         "uid": "loki"
       },
       "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 5,
+        "x": 9,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "displayLabels": [
+          "name",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/^id \\(count\\)$/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{event=~\"$event_filter\"} | json",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Total per event",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "delimiter": ",",
+            "keepTime": false,
+            "replace": false,
+            "source": "labels"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "event": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "groupby"
+              },
+              "id": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
         "defaults": {},
         "overrides": []
       },
       "gridPos": {
-        "h": 20,
-        "w": 15,
-        "x": 9,
+        "h": 10,
+        "w": 10,
+        "x": 14,
         "y": 0
       },
       "id": 2,
@@ -174,13 +270,163 @@
         {
           "direction": "backward",
           "editorMode": "code",
-          "expr": "{event=~\"$map_query\"} | json | line_format \"{{printf \\\"%s\\\" .message}}\"",
+          "expr": "{event=~\"$event_filter\"} | json | line_format \"{{printf \\\"%s\\\" .message}}\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
       "title": "Logs",
       "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id (count)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Count"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "message"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Reason"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Reason"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 854
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 15,
+        "x": 9,
+        "y": 10
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Count"
+          }
+        ]
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{event=\"crash\"} | json",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Crash Reasons",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "delimiter": ",",
+            "format": "json",
+            "keepTime": false,
+            "replace": false,
+            "source": "labels"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": []
+              },
+              "Value #B": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "id": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "message": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "preload": false,
@@ -194,26 +440,56 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "All",
+          "text": [
+            "$__all"
+          ],
           "value": [
             "$__all"
           ]
         },
-        "definition": "",
         "includeAll": true,
-        "label": "View",
+        "label": "Event Filter",
         "multi": true,
-        "name": "map_query",
-        "options": [],
-        "query": {
-          "label": "event",
-          "refId": "LokiVariableQueryEditor-VariableQuery",
-          "stream": "{event=~\"crash|player|unknown|timeout|security|resource|heatmap\"}",
-          "type": 1
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
+        "name": "event_filter",
+        "options": [
+          {
+            "selected": false,
+            "text": "crash",
+            "value": "crash"
+          },
+          {
+            "selected": false,
+            "text": "player",
+            "value": "player"
+          },
+          {
+            "selected": false,
+            "text": "unknown",
+            "value": "unknown"
+          },
+          {
+            "selected": false,
+            "text": "timeout",
+            "value": "timeout"
+          },
+          {
+            "selected": false,
+            "text": "security",
+            "value": "security"
+          },
+          {
+            "selected": false,
+            "text": "resource",
+            "value": "resource"
+          },
+          {
+            "selected": false,
+            "text": "heatmap",
+            "value": "heatmap"
+          }
+        ],
+        "query": "crash,player,unknown,timeout,security,resource,heatmap",
+        "type": "custom"
       },
       {
         "baseFilters": [],
@@ -235,5 +511,5 @@
   "timezone": "",
   "title": "World Map",
   "uid": "71b97a0d-cfe9-428c-bfbb-06677dbb8a32",
-  "version": 55
+  "version": 2
 }
