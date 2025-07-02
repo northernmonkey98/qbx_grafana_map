@@ -14,7 +14,7 @@ AddEventHandler('playerDropped', function(reason, resourceName, clientDropReason
     local lon, lat = gameToMap(playerCoords.x, playerCoords.y)
     local params = ClassifyDrop({ reason = reason, resource = resourceName, category = clientDropReason })
 
-    lib.logger(src, params.category, params.cleanReason or reason, ('lon:%s'):format(lon), ('lat:%s'):format(lat), ('resource:%s'):format(resourceName))
+    lib.logger(src, params.category, params.cleanReason or reason, ('lon:%s'):format(lon), ('lat:%s'):format(lat), ('resource:%s'):format(params.resource or resourceName))
 end)
 
 -- I don't know what the performance impact of this is. Use at your own risk.
