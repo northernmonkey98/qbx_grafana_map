@@ -17,6 +17,12 @@ AddEventHandler('playerDropped', function(reason, resourceName, clientDropReason
     lib.logger(src, params.category, params.cleanReason or reason, ('lon:%s'):format(lon), ('lat:%s'):format(lat), ('resource:%s'):format(params.resource or resourceName))
 end)
 
+AddEventHandler('explosionEvent', function(sender, params)
+    local playerCoords = GetEntityCoords(GetPlayerPed(sender))
+    local lon, lat = gameToMap(params.posX, params.posY)
+    lib.logger(tonumber(sender), 'explosion', ('%s triggered explosion type: %s | distance: %s'):format(GetPlayerName(sender), params.explosionType, #(playerCoords - vector3(params.posX, params.posY, params.posZ))), ('lon:%s'):format(lon), ('lat:%s'):format(lat), json.encode(params))
+end)
+
 -- I don't know what the performance impact of this is. Use at your own risk.
 -- CreateThread(function()
 --     while true do
