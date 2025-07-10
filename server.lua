@@ -40,6 +40,20 @@ AddEventHandler('explosionEvent', function(sender, params)
     lib.logger(tonumber(sender), 'explosion', ('%s triggered explosion type: %s | distance: %s'):format(GetPlayerName(sender), params.explosionType, #(playerCoords - vector3(params.posX, params.posY, params.posZ))), ('lon:%s'):format(lon), ('lat:%s'):format(lat), json.encode(params))
 end)
 
+
+AddEventHandler('baseevents:onPlayerDied', function(killerType, deathCoords)
+    local src = source --[[@as number]]
+    local playerCoords
+    if deathCoords then
+        playerCoords = vector3(deathCoords.x, deathCoords.y, deathCoords.z)
+    else
+        playerCoords = GetEntityCoords(GetPlayerPed(src))
+    end
+    local lon, lat = gameToMap(playerCoords.x, playerCoords.y)
+    lib.logger(src, 'death', ('Player died (killerType: %s)'):format(killerType or 'unknown'), ('lon:%s'):format(lon), ('lat:%s'):format(lat))
+end)
+
+
 -- I don't know what the performance impact of this is. Use at your own risk.
 -- CreateThread(function()
 --     while true do

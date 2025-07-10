@@ -491,9 +491,14 @@
             "selected": false,
             "text": "explosion",
             "value": "explosion"
+          },
+          {
+            "selected": false,
+            "text": "deaths",
+            "value": "deaths"
           }
         ],
-        "query": "crash,player,unknown,timeout,security,resource,heatmap,explosion",
+        "query": "crash,player,unknown,timeout,security,resource,heatmap,explosion,deaths",
         "type": "custom"
       },
       {
